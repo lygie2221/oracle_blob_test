@@ -15,12 +15,11 @@ public class JdbcOracleConnection {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
-
-    public Connection connect(String user, String pwd) throws Exception {
+    public Connection connect(String jpdcUrl, String user, String pwd) throws Exception {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             DriverManager.registerDriver(new OracleDriver());
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/XEPDB1", user, pwd);
+            conn = DriverManager.getConnection(jpdcUrl, user, pwd);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new Exception(e);
