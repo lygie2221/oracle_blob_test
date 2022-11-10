@@ -1,19 +1,13 @@
 package dsrv.orablob;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import oracle.jdbc.OracleDriver;
 
 public class JdbcOracleConnection {
 
     Connection conn = null;
-    PreparedStatement ps = null;
-    ResultSet rs = null;
 
     public Connection connect(String jpdcUrl, String user, String pwd) throws Exception {
         try {
@@ -21,7 +15,6 @@ public class JdbcOracleConnection {
             DriverManager.registerDriver(new OracleDriver());
             conn = DriverManager.getConnection(jpdcUrl, user, pwd);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new Exception(e);
         }
         return conn;

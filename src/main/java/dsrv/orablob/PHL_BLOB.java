@@ -21,14 +21,17 @@ public class PHL_BLOB {
             keyvalue=1;
         }
 
-        if(!isSecureTableOrColumnName(table)){
-            throw new SQLException("Table " + table + " not valid");
+        if(isUnsecureTableOrColumnName(table)){
+            System.out.println("Fehlerhafter Tabellenname");
+            System.exit(-2);
         }
-        if(!isSecureTableOrColumnName(blobcolumn)){
-            throw new SQLException("Table " + blobcolumn + " not valid");
+        if(isUnsecureTableOrColumnName(blobcolumn)){
+            System.out.println("Fehlerhafter Blob-Spalte");
+            System.exit(-4);
         }
-        if(!isSecureTableOrColumnName(keycolumn)){
-            throw new SQLException("Table " + keycolumn + " not valid");
+        if(isUnsecureTableOrColumnName(keycolumn)){
+            System.out.println("Fehlerhafter Schluessel");
+            System.exit(-3);
         }
 
         PreparedStatement pstmt =
@@ -36,21 +39,24 @@ public class PHL_BLOB {
         File blob = new File(filename);
         FileInputStream in = new FileInputStream(blob);
 
-
         // the cast to int is necessary because with JDBC 4 there is
         // also a version of this method with a (int, long)
         // but that is not implemented by Oracle
         pstmt.setBinaryStream(1, in, (int)blob.length());
 
         pstmt.setInt(2, keyvalue);  // set the PK value
-        pstmt.executeUpdate();
+        int count = pstmt.executeUpdate();
         conn.commit();
         pstmt.close();
+        if(count == 0){
+            System.out.println("Zeile nicht gefunden");
+            System.exit(-22);
+        }
     }
 
-    private boolean isSecureTableOrColumnName(String argument){
+    private boolean isUnsecureTableOrColumnName(String argument){
         Pattern p = Pattern.compile("[a-zA-Z0-9_]{0,127}");
         Matcher m = p.matcher(argument);
-        return m.matches();
+        return !m.matches();
     }
 }
